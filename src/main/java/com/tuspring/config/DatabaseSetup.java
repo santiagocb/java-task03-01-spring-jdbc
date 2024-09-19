@@ -1,4 +1,4 @@
-package com.tuspring;
+package com.tuspring.config;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,7 @@ public class DatabaseSetup {
                 "id BIGSERIAL PRIMARY KEY, " +
                 "name VARCHAR(100), " +
                 "surname VARCHAR(100), " +
-                "birthdate DATE)");
+                "birthdate VARCHAR(100))");
 
         jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS Friendships (" +
                 "userid1 BIGINT, " +
@@ -40,5 +40,12 @@ public class DatabaseSetup {
                 "timestamp TIMESTAMP, " +
                 "FOREIGN KEY (postid) REFERENCES Posts(id), " +
                 "FOREIGN KEY (userid) REFERENCES Users(id))");
+    }
+
+    public void dropTables() {
+        jdbcTemplate.execute("DROP TABLE IF EXISTS Likes");
+        jdbcTemplate.execute("DROP TABLE IF EXISTS Posts");
+        jdbcTemplate.execute("DROP TABLE IF EXISTS Friendships");
+        jdbcTemplate.execute("DROP TABLE IF EXISTS Users");
     }
 }

@@ -1,16 +1,21 @@
 import com.tuspring.DataGenerator;
 import com.tuspring.config.ApplicationConfig;
+import com.tuspring.config.DatabaseSetup;
 import com.tuspring.config.JdbcConfig;
 import com.tuspring.repository.FriendshipRepository;
 import com.tuspring.repository.UserRepository;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import com.tuspring.repository.LikeRepository;
 import com.tuspring.repository.PostRepository;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+import javax.sql.DataSource;
+import java.sql.SQLException;
 
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfig.class);
 
         UserRepository userRepository = context.getBean(UserRepository.class);
@@ -18,8 +23,19 @@ public class Main {
         PostRepository postRepository = context.getBean(PostRepository.class);
         LikeRepository likeRepository = context.getBean(LikeRepository.class);
 
-        DataGenerator generator = new DataGenerator();
-        userRepository.saveAll(generator.generateUsers(1000));
+
+        DatabaseSetup dbSetUp = new DatabaseSetup(context.getBean(JdbcTemplate.class));
+        dbSetUp.dropTables();
+        dbSetUp.createTables();
+
+        DataSource dataSource = context.getBean(DataSource.class);
+        DataGenerator generator = new DataGenerator(dataSource.getConnection());
+        generator.generateUsers();
+        generator.generateFriendships();
+        generator.generatePosts();
+        generator.generateLikes();
+
+
 
         // Perform the query for users with more than 100 friends and 100 likes in March 2025
         // Implement query logic in repositories
