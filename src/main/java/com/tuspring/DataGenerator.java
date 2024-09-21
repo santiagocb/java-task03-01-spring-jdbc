@@ -1,14 +1,15 @@
 package com.tuspring;
 
-import org.springframework.stereotype.Component;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class DataGenerator {
 
@@ -25,8 +26,8 @@ public class DataGenerator {
 
     public void generateUsers() throws SQLException {
         Random random = new Random();
-        String[] names = {"John", "Jane", "Michael", "Sarah", "Robert", "Emily", "David", "Laura", "Daniel", "Sophia"};
-        String[] surnames = {"Smith", "Johnson", "Williams", "Jones", "Brown", "Davis", "Miller", "Wilson", "Moore", "Taylor"};
+        String[] names = {"Jhon", "Janeth", "Miguel", "Sara", "Roberto", "Emilia", "David", "Laura", "Daniel", "Andres", "Jesus", "Julian"};
+        String[] surnames = {"Ramirez", "Castro", "Ortega", "Juarez", "Rendon", "Bustamante", "Garcia", "Rodriguez", "Hurtado", "Florez", "Repetto"};
 
         String sql = "INSERT INTO Users (name, surname, birthdate) VALUES (?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -59,7 +60,6 @@ public class DataGenerator {
         Random random = new Random();
         String sql = "INSERT INTO Friendships (userid1, userid2, timestamp) VALUES (?, ?, ?)";
 
-        // Set to track unique (userId1, userId2) pairs
         Set<String> friendshipSet = new HashSet<>();
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -68,15 +68,12 @@ public class DataGenerator {
                 int userId1 = random.nextInt(NUM_USERS) + 1;
                 int userId2;
 
-                // Ensure no self-friendship and that the pair is unique
                 do {
                     userId2 = random.nextInt(NUM_USERS) + 1;
                 } while (userId1 == userId2 || friendshipSet.contains(userId1 + "-" + userId2) || friendshipSet.contains(userId2 + "-" + userId1));
 
-                // Add friendship to the set
                 friendshipSet.add(userId1 + "-" + userId2);
 
-                // Insert the friendship into the database
                 ps.setInt(1, userId1);
                 ps.setInt(2, userId2);
                 ps.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
@@ -88,7 +85,7 @@ public class DataGenerator {
                     ps.executeBatch();
                 }
             }
-            ps.executeBatch();  // Insert remaining batch
+            ps.executeBatch();
         }
     }
 
@@ -125,7 +122,7 @@ public class DataGenerator {
 
                 ps.setInt(1, postId);
                 ps.setInt(2, userId);
-                ps.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis()));
+                ps.setTimestamp(3, getRandomTimestamp());
                 ps.addBatch();
 
                 if (i % 1000 == 0) {
@@ -134,5 +131,18 @@ public class DataGenerator {
             }
             ps.executeBatch();
         }
+    }
+
+    private static Timestamp getRandomTimestamp() {
+        LocalDateTime now = LocalDateTime.now();
+
+        LocalDateTime twoMonthsAgo = now.minusMonths(2);
+
+        long nowMillis = now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        long fiveMonthsAgoMillis = twoMonthsAgo.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
+        long randomMillis = ThreadLocalRandom.current().nextLong(fiveMonthsAgoMillis, nowMillis);
+
+        return new Timestamp(randomMillis);
     }
 }

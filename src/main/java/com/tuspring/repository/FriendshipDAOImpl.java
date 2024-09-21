@@ -10,11 +10,11 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Repository
-public class FriendshipRepositoryImpl implements FriendshipRepository {
+public class FriendshipDAOImpl implements FriendshipDAO {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public FriendshipRepositoryImpl(JdbcTemplate jdbcTemplate) {
+    public FriendshipDAOImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -26,8 +26,8 @@ public class FriendshipRepositoryImpl implements FriendshipRepository {
 
     @Override
     public List<Friendship> findByUserId(long userId) {
-        String sql = "SELECT * FROM Friendships WHERE userid1 = ? OR userid2 = ?";
-        return jdbcTemplate.query(sql, new FriendshipRowMapper(), userId, userId);
+        String sql = "SELECT * FROM Friendships WHERE userid1 = ?";
+        return jdbcTemplate.query(sql, new FriendshipRowMapper(), userId);
     }
 
     @Override

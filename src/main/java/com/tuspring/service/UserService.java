@@ -1,0 +1,32 @@
+package com.tuspring.service;
+
+import com.tuspring.repository.FriendshipDAO;
+import com.tuspring.repository.UserDAO;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+@Service
+public class UserService {
+
+    private final UserDAO userDAO;
+    private final FriendshipDAO friendshipDAO;
+
+    public UserService(UserDAO userDAO, FriendshipDAO friendshipDAO) {
+        this.userDAO = userDAO;
+        this.friendshipDAO = friendshipDAO;
+    }
+
+    public List<String> getUserNamesWithMoreThanFriendsNumberAnd100LikesInTheLasthMonth(long userFriendShips) {
+        return userDAO.findUserNamesWithMoreThanFriendsNumberAnd100LikesInTheLasthMonth(userFriendShips);
+    }
+
+    public long getFriendshipNumberAverage() {
+        var users = userDAO.findAll();
+
+        return (long) users
+                .stream()
+                .map(u -> friendshipDAO.findByUserId(u.getId()).size()).mapToDouble(Integer::doubleValue)
+                .average()
+                .orElse(0.0);
+    }
+}

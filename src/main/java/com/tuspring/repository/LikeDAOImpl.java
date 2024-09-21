@@ -10,11 +10,11 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Repository
-public class LikeRepositoryImpl implements LikeRepository {
+public class LikeDAOImpl implements LikeDAO {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public LikeRepositoryImpl(JdbcTemplate jdbcTemplate) {
+    public LikeDAOImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

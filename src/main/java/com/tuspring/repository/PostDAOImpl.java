@@ -10,11 +10,11 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Repository
-public class PostRepositoryImpl implements PostRepository {
+public class PostDAOImpl implements PostDAO {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public PostRepositoryImpl(JdbcTemplate jdbcTemplate) {
+    public PostDAOImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

@@ -5,17 +5,48 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
-public class UserRepositoryImpl implements UserRepository {
+public class UserDAOImpl implements UserDAO {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public UserRepositoryImpl(JdbcTemplate jdbcTemplate) {
+    public UserDAOImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public List<String> findUserNamesWithMoreThanFriendsNumberAnd100LikesInTheLasthMonth(long friendShips) {
+
+        var currentDate = LocalDate.now();
+        var firstDay = currentDate.withDayOfMonth(1);
+        var firstDayOfNextMonth = currentDate.plusMonths(1);
+
+        String sql = """
+            SELECT DISTINCT (u.name || ' ' || u.surname) AS fullname
+            FROM Users u
+            JOIN (
+                SELECT f.userid1 AS userid
+                FROM Friendships f
+                GROUP BY f.userid1
+                HAVING COUNT(f.userid1) > ?
+            ) friends
+            ON u.id = friends.userid
+            JOIN (
+                SELECT l.userid AS userid
+                FROM Likes l
+                WHERE l.timestamp >= ? AND l.timestamp < ?
+                GROUP BY l.userid
+                HAVING COUNT(l.userid) > 100
+            ) likes
+            ON u.id = likes.userid;
+            """;
+
+        return jdbcTemplate.queryForList(sql, String.class, friendShips, Date.valueOf(firstDay), Date.valueOf(firstDayOfNextMonth));
     }
 
     @Override

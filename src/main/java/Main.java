@@ -1,12 +1,10 @@
 import com.tuspring.DataGenerator;
 import com.tuspring.config.ApplicationConfig;
 import com.tuspring.config.DatabaseSetup;
-import com.tuspring.config.JdbcConfig;
-import com.tuspring.repository.FriendshipRepository;
-import com.tuspring.repository.UserRepository;
+import com.tuspring.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import com.tuspring.repository.LikeRepository;
-import com.tuspring.repository.PostRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
@@ -16,17 +14,15 @@ import java.sql.SQLException;
 public class Main {
 
     public static void main(String[] args) throws SQLException {
+
+        final Logger logger = LoggerFactory.getLogger(Main.class);
+
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfig.class);
-
-        UserRepository userRepository = context.getBean(UserRepository.class);
-        FriendshipRepository friendshipRepository = context.getBean(FriendshipRepository.class);
-        PostRepository postRepository = context.getBean(PostRepository.class);
-        LikeRepository likeRepository = context.getBean(LikeRepository.class);
-
 
         DatabaseSetup dbSetUp = new DatabaseSetup(context.getBean(JdbcTemplate.class));
         dbSetUp.dropTables();
         dbSetUp.createTables();
+        logger.info("Tables created");
 
         DataSource dataSource = context.getBean(DataSource.class);
         DataGenerator generator = new DataGenerator(dataSource.getConnection());
@@ -34,13 +30,16 @@ public class Main {
         generator.generateFriendships();
         generator.generatePosts();
         generator.generateLikes();
+        logger.info("Data generated");
 
+        UserService userService = context.getBean(UserService.class);
 
+        long friendShipNumberAverage = userService.getFriendshipNumberAverage();
 
-        // Perform the query for users with more than 100 friends and 100 likes in March 2025
-        // Implement query logic in repositories
+        logger.info(String.format("Users with more than %s friends and 100 likes in the last month: %n", friendShipNumberAverage));
+        userService.getUserNamesWithMoreThanFriendsNumberAnd100LikesInTheLasthMonth(friendShipNumberAverage).forEach(System.out::println);
 
-
+        dbSetUp.dropTables();
         context.close();
     }
 }
