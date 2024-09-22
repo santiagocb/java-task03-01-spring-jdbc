@@ -13,9 +13,9 @@ import java.sql.SQLException;
 
 public class Main {
 
-    public static void main(String[] args) throws SQLException {
+    public static final Logger logger = LoggerFactory.getLogger(Main.class);
 
-        final Logger logger = LoggerFactory.getLogger(Main.class);
+    public static void main(String[] args) throws SQLException {
 
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfig.class);
 
