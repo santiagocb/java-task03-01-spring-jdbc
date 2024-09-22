@@ -1,4 +1,4 @@
-package com.tuspring.repository;
+package com.tuspring.dao;
 
 
 import com.tuspring.dto.User;

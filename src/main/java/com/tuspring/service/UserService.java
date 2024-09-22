@@ -1,7 +1,7 @@
 package com.tuspring.service;
 
-import com.tuspring.repository.FriendshipDAO;
-import com.tuspring.repository.UserDAO;
+import com.tuspring.dao.FriendshipDAO;
+import com.tuspring.dao.UserDAO;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
