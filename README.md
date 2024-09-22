@@ -15,3 +15,6 @@ The target of this exercise is to practice Spring JDBC with Java 17.
 1. Run postgres through Docker with following command: `docker run --name lil-postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres`
 2. Run psql command to create DB: `psql -h localhost -U postgres -f database.sql` and enter the password: `password`
 3. Run Main program.
+
+## Output
+![Screenshot 2024-09-21 at 10 34 04 PM](https://github.com/user-attachments/assets/b398a207-db88-4899-87f5-3d25f2081eb7)
