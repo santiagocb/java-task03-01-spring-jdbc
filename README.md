@@ -4,7 +4,7 @@ The target of this exercise is to practice Spring JDBC with Java 17.
 ## Features
 - CRUD of user project
 - Generate data in memory and INSERT batches
-- Specific SELECT with JOINs
+- Specific SELECT with JOINs to print out all names (only distinct) of users who has more than average friends and 100 likes in the last month.
 
 ## Requirements
 - Install Docker
