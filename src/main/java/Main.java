@@ -1,13 +1,11 @@
-import com.tuspring.DataGenerator;
+import com.tuspring.config.DataGenerator;
 import com.tuspring.config.ApplicationConfig;
 import com.tuspring.config.DatabaseSetup;
 import com.tuspring.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.sql.DataSource;
 import java.sql.SQLException;
 
 
@@ -19,13 +17,12 @@ public class Main {
 
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfig.class);
 
-        DatabaseSetup dbSetUp = new DatabaseSetup(context.getBean(JdbcTemplate.class));
+        DatabaseSetup dbSetUp = context.getBean(DatabaseSetup.class);
         dbSetUp.dropTables();
         dbSetUp.createTables();
         logger.info("Tables created");
 
-        DataSource dataSource = context.getBean(DataSource.class);
-        DataGenerator generator = new DataGenerator(dataSource.getConnection());
+        DataGenerator generator = context.getBean(DataGenerator.class);
         generator.generateUsers();
         generator.generateFriendships();
         generator.generatePosts();

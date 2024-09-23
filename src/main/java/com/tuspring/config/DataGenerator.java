@@ -1,5 +1,8 @@
-package com.tuspring;
+package com.tuspring.config;
 
+import org.springframework.stereotype.Component;
+
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -11,6 +14,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
+@Component
 public class DataGenerator {
 
     private static final int NUM_USERS = 1000;
@@ -20,8 +24,8 @@ public class DataGenerator {
 
     private final Connection connection;
 
-    public DataGenerator(Connection conn) {
-        connection = conn;
+    public DataGenerator(DataSource dataSource) throws SQLException {
+        connection = dataSource.getConnection();
     }
 
     public void generateUsers() throws SQLException {
